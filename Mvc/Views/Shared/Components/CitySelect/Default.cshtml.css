@@ -1,0 +1,12 @@
+﻿.city-select-form {
+    width: max-content;
+    padding: 15px;
+    background-color: var(--background);
+    border: 1px solid var(--primary);
+    border-radius: 4px;
+}
+
+::deep .city-select-form__select {
+    display: block;
+    margin-bottom: 0.5rem;
+}

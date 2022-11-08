@@ -1,0 +1,122 @@
+﻿@model CartViewModel
+
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+<div class="cart">
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Entries[0].Book.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Entries[0].Book.Price)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Entries[0].Count)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Entries[0].Total)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Entries)
+        {
+            <tr data-id="@item.Book.Id">
+                <td class="cart__cell-name">
+                    @Html.DisplayFor(modelItem => item.Book.Name)
+                </td>
+                <td>
+                    @item.Book.Price.ToString("0") ₽
+                </td>
+                <td>
+                    <a class="cart__decrease" tabindex="0">-</a>
+                    <span class="cart__entry-count">@Html.DisplayFor(modelItem => item.Count)</span>
+                    <a class="cart__increase" tabindex="0">+</a>
+                </td>
+                <td>
+                    <span class="cart__entry-total">@(item.Total.ToString("0")) ₽</span>
+                </td>
+                <td>
+                    <a class="cart__remove" tabindex="0">Удалить</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <form asp-controller="Book" asp-action="Checkout" method="post" class="cart__result">
+        <h4 class="cart__total">
+            Итого:
+            <span class="cart__total-sum">
+                @Model.Total.ToString("0")
+            </span>
+            ₽
+        </h4>
+        <input class="mvc-button cart__checkout" type="submit" value="Оформить покупку">
+    </form>
+</div>
+
+@section Scripts
+{
+    <script>
+        $('.cart__increase').click(function() {
+            const row = $(this).parents('tr').first();
+            $.ajax({
+                type: 'POST',
+                url: '/Book/AddToCart',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(row.data('id')),
+                success: data => {
+                    window.updateBadge(data);
+                    if (data.bookEntry) {
+                        row.find('.cart__entry-count').text(data.bookEntry.count);
+                        row.find('.cart__entry-total').text(data.bookEntry.total);
+                    }
+                    $('.cart__total-sum').text(data.total);
+                },
+                error: (request, status, error) => console.error(error, request),
+            });
+        });
+
+        $('.cart__decrease').click(function() {
+            const row = $(this).parents('tr').first();
+            $.ajax({
+                type: 'POST',
+                url: '/Book/CartDecreaseEntry',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(row.data('id')),
+                success: data => {
+                    window.updateBadge(data);
+                    if (data.bookEntry) {
+                        row.find('.cart__entry-count').text(data.bookEntry.count);
+                        row.find('.cart__entry-total').text(data.bookEntry.total);
+                    }
+                    $('.cart__total-sum').text(data.total);
+                },
+                error: (request, status, error) => console.error(error, request),
+            });
+        });
+
+        $('.cart__remove').click(function() {
+            const row = $(this).parents('tr').first();
+            $.ajax({
+                type: 'POST',
+                url: '/Book/CartRemoveEntry',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(row.data('id')),
+                success: data => {
+                    window.updateBadge(data);
+                    row.remove();
+                    $('.cart__total-sum').text(data.total);
+                },
+                error: (request, status, error) => console.error(error, request),
+            });
+        });
+    </script>
+}

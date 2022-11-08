@@ -1,0 +1,8 @@
+﻿@model SelectList
+
+<div class="city-select-form">
+    <form asp-controller="Book" asp-action="SelectCity" method="post">
+        <select class="city-select-form__select" name="Id" asp-items="Model"></select>
+        <input class="city-select-form__submit-button mvc-button" type="submit" value="Ок"/>
+    </form>
+</div>

@@ -1,0 +1,14 @@
+﻿.cart__cell-name {
+    font-weight: 700;
+}
+
+::deep .cart__result {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 24px;
+}
+
+.cart__total {
+    margin-bottom: 0;
+}

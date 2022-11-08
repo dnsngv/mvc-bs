@@ -1,0 +1,135 @@
+﻿@model BookListViewModel
+
+@{
+    ViewData["Title"] = "BookStore";
+}
+
+@functions
+{
+    string GetNewSortDirection(string sortBy)
+    {
+        return sortBy != Model.SortBy || Model.SortDirection == "desc"
+            ? null
+            : "desc";
+    }
+
+}
+
+<div class="book-table">
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>
+                    @Html.ActionLink(
+                        Html.DisplayNameFor(model => model.Books[0].Name),
+                        "Index",
+                        new { sortBy = "Name", sortDirection = GetNewSortDirection("Name"), search = Model.Search }
+                        )
+                    @if (Model.SortBy == "Name")
+                    {
+                        <svg class="book-table__sort-icon @(Model.SortDirection != "desc" ? "book-table__sort-icon_up" : "")" width="24" height="24">
+                            <use href="assets/icons.svg#downArrow"></use>
+                        </svg>
+                    }
+                </th>
+                <th>
+                    @Html.ActionLink(
+                        Html.DisplayNameFor(model => model.Books[0].Author),
+                        "Index",
+                        new { sortBy = "Author", sortDirection = GetNewSortDirection("Author"), search = Model.Search }
+                    )
+                    @if (Model.SortBy == "Author")
+                    {
+                        <svg class="book-table__sort-icon @(Model.SortDirection != "desc" ? "book-table__sort-icon_up" : "")" width="24" height="24">
+                             <use href="assets/icons.svg#downArrow"></use>
+                        </svg>
+                    }
+                </th>
+                <th>
+                    @Html.ActionLink(
+                        Html.DisplayNameFor(model => model.Books[0].Price),
+                        "Index",
+                        new { sortBy = "Price", sortDirection = GetNewSortDirection("Price"), search = Model.Search }
+                    )
+                    @if (Model.SortBy == "Price")
+                    {
+                        <svg class="book-table__sort-icon @(Model.SortDirection != "desc" ? "book-table__sort-icon_up" : "")" width="24" height="24">
+                             <use href="assets/icons.svg#downArrow"></use>
+                        </svg>
+                    }
+                </th>
+@*                <th>
+                    @Html.ActionLink(
+                        Html.DisplayNameFor(model => model.Books[0].Type),
+                        "Index",
+                        new { sortBy = "Type", sortDirection = GetNewSortDirection("Type"), search = Model.Search }
+                    )
+                    @if (Model.SortBy == "Type")
+                    {
+                        <svg class="book-table__sort-icon @(Model.SortDirection != "desc" ? "book-table__sort-icon_up" : "")">
+                             <use href="assets/icons.svg#downArrow"></use>
+                        </svg>
+                    }
+                </th>*@
+@*                <th>
+                    @Html.ActionLink(
+                        Html.DisplayNameFor(model => model.Books[0].Genre),
+                        "Index",
+                        new { sortBy = "Genre", sortDirection = GetNewSortDirection("Genre"), search = Model.Search }
+                    )
+                    @if (Model.SortBy == "Genre")
+                    {
+                        <svg class="book-table__sort-icon @(Model.SortDirection != "desc" ? "book-table__sort-icon_up" : "")">
+                             <use href="assets/icons.svg#downArrow"></use>
+                        </svg>
+                    }
+                </th>*@
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model.Books) {
+            <tr>
+                <td class="book-table__cell-name">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author)
+                </td>
+                <td>
+                    @item.Price.ToString("0") ₽
+                </td>
+@*                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>*@
+@*                <td>
+                    @Html.DisplayFor(modelItem => item.Genre)
+                </td>*@
+                <td>
+                    <a class="book-table__to-cart" tabindex="0" data-id="@item.Id">В корзину</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+
+</div>
+
+@section Scripts
+{
+    <script>
+        $('.book-table__to-cart').click(function() {
+            $.ajax({
+                type: 'POST',
+                url: '/Book/AddToCart',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify($(this).data('id')),
+                success: data => {
+                    window.updateBadge(data);
+                },
+                error: (request, status, error) => console.error(error, request),
+            });
+        });
+    </script>
+}

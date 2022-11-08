@@ -1,0 +1,7 @@
+<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="downArrow" viewBox="0 0 730 730">
+        <g>
+            <path d="m515,240l0,100l-150,150l-150,-150l0,-100l150,150l150,-150z" stroke-dasharray="null" stroke-width="null"/>
+        </g>
+    </symbol>
+</svg>
